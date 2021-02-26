@@ -60,10 +60,10 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - "v4-dependencies-"
+            - 'v4-dependencies-'
       - run: npm install
       - save_cache:
-          key: "v4-dependencies-"
+          key: 'v4-dependencies-'
           paths:
             - node_modules
       - persist_to_workspace:
@@ -295,36 +295,47 @@ workflows:
       - job-unit-tests:
           requires:
             - job-prepare
+            - job-compile
       - job-unit-tests-ovm:
           requires:
             - job-prepare
-      - job-unit-tests-coverage:
-          requires:
-            - job-prepare
-      - job-unit-tests-gas-report:
-          requires:
-            - job-prepare
+            - job-unit-tests
       - job-test-deploy-script:
           requires:
             - job-prepare
-      - job-prod-tests:
+            - job-unit-tests-ovm
+      - job-unit-tests-gas-report:
           requires:
             - job-prepare
+            - job-unit-tests-ovm
+      - job-unit-tests-coverage:
+          requires:
+            - job-prepare
+            - job-unit-tests-gas-report
       - job-prod-diff-tests-local:
           name: job-prod-diff-tests-local
           requires:
             - job-prepare
+            - job-unit-tests-gas-report
       - job-prod-diff-tests-local-ovm:
           name: job-prod-diff-tests-local-ovm
           requires:
             - job-prepare
+            - job-prod-diff-tests-local
+      - job-prod-tests:
+          requires:
+            - job-prepare
+            - job-prod-diff-tests-local-ovm
       - job-prod-diff-tests:
           name: job-prod-diff-tests-mainnet
           requires:
             - job-prepare
+            - job-prod-tests
       - job-pack-browser:
           requires:
             - job-prepare
+            - job-unit-tests-coverage
       - job-validate-deployments:
           requires:
             - job-prepare
+            - job-unit-tests-coverage

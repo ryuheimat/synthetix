@@ -15,41 +15,52 @@ jobs:
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   - job-unit-tests:
       {{> require-prepare.yml}}
+        - job-compile
   - job-unit-tests-ovm:
       {{> require-prepare.yml}}
-  - job-unit-tests-coverage:
-      {{> require-prepare.yml}}
-  - job-unit-tests-gas-report:
-      {{> require-prepare.yml}}
+        - job-unit-tests
   - job-test-deploy-script:
       {{> require-prepare.yml}}
+        - job-unit-tests-ovm
+  - job-unit-tests-gas-report:
+      {{> require-prepare.yml}}
+        - job-unit-tests-ovm
+  - job-unit-tests-coverage:
+      {{> require-prepare.yml}}
+        - job-unit-tests-gas-report
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Prod tests
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  - job-prod-tests:
-      {{> require-prepare.yml}}
   - job-prod-diff-tests-local:
       name: job-prod-diff-tests-local
       {{> require-prepare.yml}}
+        - job-unit-tests-gas-report
   - job-prod-diff-tests-local-ovm:
       name: job-prod-diff-tests-local-ovm
       {{> require-prepare.yml}}
+        - job-prod-diff-tests-local
+  - job-prod-tests:
+      {{> require-prepare.yml}}
+        - job-prod-diff-tests-local-ovm
   - job-prod-diff-tests:
       name: job-prod-diff-tests-mainnet
       {{> require-prepare.yml}}
+        - job-prod-tests
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Packaging
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   - job-pack-browser:
       {{> require-prepare.yml}}
+        - job-unit-tests-coverage
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Deployment validation
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   - job-validate-deployments:
       {{> require-prepare.yml}}
+        - job-unit-tests-coverage
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Etherscan validations
